@@ -11,19 +11,29 @@
 \usecolortheme{mit}
 \usefonttheme[onlymath]{serif}
 
-\title{DECOUPLING REPRESENTATION AND CLASSIFIER FOR LONG-TAILED RECOGNITION}
-\author{Bingyi Kang, Saining Xie, Marcus Rohrbach, Zhicheng Yan, Albert Gordo, Jiashi Feng, Yannis Kalantidis}
+\title{Task-agnostic Continual Learning with Hybrid Probabilistic Models}
+\author[Polina Kirichenko \and Mehrdad Farajtabar]{
+  Polina Kirichenko \inst{1} \and Mehrdad Farajtabar \inst{2} \and Dushyant Rao \inst{2} \\
+  Balaji Lakshminarayanan \inst{3} \and Nir Levine \inst{2} \and Ang Li \inst{2} \\
+  Huiyi Hu \inst{2} \and Andrew Gordon Wilson \inst{1} \and Razvan Pascanu \inst{2}
+}
+
+\institute[NYU \and DeepMind \and Google Brain]{
+  \inst{1} New York University \and
+  \inst{2} DeepMind \and
+  \inst{3} Google Brain
+}
 \date{\today}
 % \pgfdeclareimage[height=0.5cm]{mit-logo}{mit-logo.pdf}
 % \logo{\pgfuseimage{mit-logo}\hspace*{0.3cm}}
 
-\AtBeginSection[]
-{
-  \begin{frame}<beamer>
-    \frametitle{Outline}
-    \tableofcontents[currentsection]
-  \end{frame}
-}
+% \AtBeginSection[]
+% {
+%   \begin{frame}<beamer>
+%     \frametitle{Outline}
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
 \beamerdefaultoverlayspecification{<+->}
 % -----------------------------------------------------------------------------
 \begin{document}
@@ -86,7 +96,7 @@
 \end{frame}
 
 % -----------------------------------------------------------------------------
-\section{Related Work}
+\section{Background and Notation}
 \begin{frame}{Neural Networks}
   \begin{itemize}
     \item<1-> Brain Analogies
@@ -147,7 +157,7 @@ distribution over the output of the model.
 \end{frame}
 
 % -----------------------------------------------------------------------------
-\section{Learning Representations}
+\section{HCL}
 \begin{frame}{Activation Function}
   We apply the \textit{Softplus} function because we want to ensure that the variance $\alpha \mu^2$ never becomes zero.
 
@@ -224,10 +234,13 @@ distribution over the output of the model.
 \end{frame}
 
 % -----------------------------------------------------------------------------
-\section{Classification}
+\section{Experiments}
 
 % -----------------------------------------------------------------------------
-\section{Experiments}
+\section{Discussion}
+\begin{frame}
+  
+\end{frame}
 
 % -----------------------------------------------------------------------------
 \end{document}
