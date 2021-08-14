@@ -1,0 +1,233 @@
+\documentclass{beamer}
+%\documentclass[handout,t]{beamer}
+
+\batchmode
+% \usepackage{pgfpages}
+% \pgfpagesuselayout{4 on 1}[letterpaper,landscape,border shrink=5mm]
+
+\usepackage{amsmath,amssymb,amsfonts,enumerate,epsfig,bbm,calc,color,ifthen,capt-of}
+
+\usetheme{Berlin}
+\usecolortheme{mit}
+\usefonttheme[onlymath]{serif}
+
+\title{DECOUPLING REPRESENTATION AND CLASSIFIER FOR LONG-TAILED RECOGNITION}
+\author{Bingyi Kang, Saining Xie, Marcus Rohrbach, Zhicheng Yan, Albert Gordo, Jiashi Feng, Yannis Kalantidis}
+\date{\today}
+% \pgfdeclareimage[height=0.5cm]{mit-logo}{mit-logo.pdf}
+% \logo{\pgfuseimage{mit-logo}\hspace*{0.3cm}}
+
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+\beamerdefaultoverlayspecification{<+->}
+% -----------------------------------------------------------------------------
+\begin{document}
+% -----------------------------------------------------------------------------
+
+\frame{\titlepage}
+
+\section[Outline]{}
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\section{Introduction}
+% \subsection{Smoot's Ear: The Measure of Humanity}
+\begin{frame}{Existing Approaches}
+  \begin{itemize}
+    \item<1-> re-sample the data or design specific loss functions that better facilitate learning with imbalanced data
+    \item<1-> enhance recognition performance of the tail classes by transferring knowledge from the head classes
+  \end{itemize}
+  
+  \begin{block}{Title of}
+    hi
+  \end{block}
+\end{frame}
+\begin{frame}{Current Situation}
+  \begin{itemize}
+    \item<1-> From a probability theory perspective, it is unjustifiable to use single point-estimates as weights to base any classification on.
+    \item<1-> Modelling a distribution over the kernels (also known as filters) of a Cnns has never been attempted successfully before.
+    \item<1-> The variational approach used to approximate the posterior in Bayesian NNs can be fairly computationally expensive – the use of Gaussian approximating distributions increases the number of model parameters considerably, without increasing model capacity by much.
+  \end{itemize}
+\end{frame}
+\begin{frame}{Our Hypothesis}
+  we approximate the intractable true posterior probability distributions $p(w|\mathcal{D})$
+  with variational probability distributions $q_\theta(w|\mathcal{D})$,
+  which comprise the properties of Gaussian distributions $\mu \in \Re^d$ and $\sigma \in \Re^d$,
+  denoted by $\mathcal{N}(\theta|\mu, \sigma^2)$, where $d$ is the total number of parameters defining a probability distribution. 
+\end{frame}
+\begin{frame}{Our Contribution (1)}
+  \begin{itemize}
+    \item<1-> Present how \textit{Bayes by Backprop} can be efficiently applied to Cnns.
+    \item<1-> Show how the model learns richer representations and predictions from cheap model
+    averaging.
+    \item<1-> Show that the proposed variational inference method for Bayesian Cnns can be applied to various Cnn architectures without any limitations
+    on their performances.
+  \end{itemize}
+\end{frame}
+\begin{frame}{Our Contribution (2)}
+  \begin{itemize}
+    \item<1-> Examine how to estimate the aleatoric and epistemic uncertainties and empirically
+    show how the uncertainty can decrease, allowing the decisions made by the network to
+    become more deterministic as the training accuracy increases.
+    \item<1-> Show how the method typically only doubles the number of parameters yet trains an infinite ensemble using unbiased Monte Carlo estimates of the
+    gradients.
+    \item<1-> Apply L1 norm to the trained model parameters and prune the number of non
+    zero values.
+    \item<1-> Apply the concept of Bayesian CNN to tasks like Image Super-Resolution
+    and Generative Adversarial.
+  \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\section{Related Work}
+\begin{frame}{Neural Networks}
+  \begin{itemize}
+    \item<1-> Brain Analogies
+    \item<1-> Neural Network
+    \item<1-> Convolutional Neural Network
+  \end{itemize}
+\end{frame}
+\begin{frame}{Probabilistic Machine Learning (1)}
+  \begin{equation}
+    p(y^*|x^*, X, Y) = \int p(y^*|f^*)p(f^*|x^*, X, Y) df^*
+  \end{equation}
+  The equation is intractable due to the integration sign. We can approximate it by taking a finite set of random variables $w$ and conditioning the model on it.
+  \[
+    p(y^*|x^*, X, Y) = \int p(y^*|f^*)p(f^*|x^*, w)p(w|X, Y) df^*dw
+  \]
+\end{frame}
+\begin{frame}{Probabilistic Machine Learning (2)}
+  we approximate $p(w|X, Y)$ with a variational distribution $q(w)$. Then
+  \begin{equation}
+    q(y^*|x^*) = \int p(y^*|f^*)p(f^*|x^*, w)q(w)df^*dw
+  \end{equation}
+  Minimising the Kullback–Leibler divergence is equivalent to maximising the \textit{log evidence lower bound},
+  \begin{equation}
+    KL_{VI} := \int q(w)p(F|X, w) \log p(Y|F) dFdw - KL(q(w)\|p(w))
+  \end{equation}
+\end{frame}
+\begin{frame}{Uncertainties in Bayesian Learning}
+  \begin{itemize}
+    \item<1-> \textit{Aleatoric} uncertainty: measure the noise inherent in the observations. 
+    It is present in the data collection method. It cannot be reduced if more data is collected.
+    \item<1-> \textit{Epistemic} uncertainty: represent the uncertainty caused by the model.
+    It can be reduced given more data and is often referred to as \textit{model uncertainty}.
+  \end{itemize}
+  Epistemic uncertainty is modelled by placing a prior distribution over a model’s weights and then trying to capture how much these weights
+vary given some data. Aleatoric uncertainty, on the other hand, is modelled by placing a
+distribution over the output of the model.
+\end{frame}
+\begin{frame}{Bayes by Backprop (1)}
+  \textit{Bayes by Backprop} is a variational inference method to learn the posterior distribution
+  on the weights $w \sim q_\theta(w|\mathcal{D})$ of a neural network from which weights w can be sampled in
+  backpropagation.
+\end{frame}
+\begin{frame}{Bayes by Backprop (2)}
+  An approximate distribution $q_\theta(w|\mathcal{D})$ is
+  defined that is aimed to be as similar as possible to the true posterior $p(w|\mathcal{D})$, measured by
+  the KL divergence. Hence, we define the optimal parameters $\theta^{opt}$ as
+  \begin{equation}
+    \begin{split}
+      \theta^{opt} &= arg \  min_\theta KL [q_\theta(w|\mathcal{D}) \| p(w|\mathcal{D})] \\
+      &= arg \  min_\theta KL [q_\theta(w|\mathcal{D}) \| p(w)] \\
+      &- \mathbb{E}_{q(w|\theta)}[\log p(\mathcal{D}|w)] + \log p(\mathcal{D})
+    \end{split}
+  \end{equation}
+  where
+  \begin{equation}
+    KL [q_\theta(w|\mathcal{D}) \| p(w)] = \int q_\theta(w|\mathcal{D}) \log \frac{q_\theta(w|\mathcal{D})}{p(w)}dw.
+  \end{equation}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\section{Learning Representations}
+\begin{frame}{Activation Function}
+  We apply the \textit{Softplus} function because we want to ensure that the variance $\alpha \mu^2$ never becomes zero.
+
+  \begin{equation}
+    \text{Softplus}(x) = \frac{1}{\beta} \cdot \log \big( 1 + \exp(\beta \cdot x) \big)
+  \end{equation}
+
+  where $\beta$ is by default set to 1.
+\end{frame}
+\begin{frame}{Network Architecture}
+  For all conducted experiments, we implement the foregoing description of Bayesian Cnns with
+  variational inference in LeNet-5 and AlexNet. 
+
+  \textbf{GitHub repositor:} \url{https://github.com/kumar-shridhar/PyTorch-BayesianCN}
+\end{frame}
+\begin{frame}{Objective Function}
+
+  \begin{equation}
+    \mathcal{F}(\mathcal{D}, \theta) \approx \sum_{i = 1}^n \log q_\theta(w^{(i)}|\mathcal{D}) - \log p(w^{(i)}) - \log p(\mathcal{D}|w^{(i)})
+  \end{equation}
+
+  where $n$ is the number of draws.
+\end{frame}
+\begin{frame}{Variational Posterior}
+  \[
+    \mathcal{F}(\mathcal{D}, \theta) \approx \sum_{i = 1}^n \log q_\theta(w^{(i)}|\mathcal{D}) - \log p(w^{(i)}) - \log p(\mathcal{D}|w^{(i)})
+  \]
+  The variational posterior is taken as Gaussian distribution centred around mean $\mu$ and variance as $\sigma^2$
+  \begin{equation}
+    q_\theta(w^{(i)}|\mathcal{D}) = \prod_i \mathcal{N}(w_i|\mu, \sigma^2)
+  \end{equation}
+  Then,
+  \begin{equation}
+    \log(q_\theta(w^{(i)}|\mathcal{D})) = \sum_i \log \mathcal{N}(w_i|\mu, \sigma^2)
+  \end{equation}
+\end{frame}
+\begin{frame}{Prior}
+  \[
+    \mathcal{F}(\mathcal{D}, \theta) \approx \sum_{i = 1}^n \log q_\theta(w^{(i)}|\mathcal{D}) - \log p(w^{(i)}) - \log p(\mathcal{D}|w^{(i)})
+  \]
+  Define the prior over the weights as a product of individual Gaussians:
+  \begin{equation}
+    p(w^{(i)}) = \prod_i \mathcal{N}(w_i|0, \sigma_p^2)
+  \end{equation}
+  Then,
+  \begin{equation}
+    \log(p(w^{(i)})) = \sum_i \log \mathcal{N}(w_i|0, \sigma_p^2)
+  \end{equation}
+\end{frame}
+\begin{frame}{Likelihood}
+  \[
+    \mathcal{F}(\mathcal{D}, \theta) \approx \sum_{i = 1}^n \log q_\theta(w^{(i)}|\mathcal{D}) - \log p(w^{(i)}) - \log p(\mathcal{D}|w^{(i)})
+  \]
+  $\log p(\mathcal{D}|w^{(i)})$ is the likelihood term and is computed using the softmax function.  
+\end{frame}
+\begin{frame}{Parameter Initialization}
+  \begin{itemize}
+    \item We express variance $\sigma$ as $\sigma_i = \textit{softplus}(\rho_i)$ where $\rho$ is an unconstrained parameter.
+    \item We take the Gaussian distribution and initialize mean $\mu$ as 0 and variance $\sigma$ (and hence $\rho$) randomly. 
+    \item We observed mean centred around 0 and a variance starting with a big number and gradually decreasing over time.
+    \item We perform gradient descent over $\theta = (\mu, \rho)$, and individual weight $w_i \sim \mathcal{N}(w_i|\mu_i, \sigma_i)$.
+  \end{itemize}
+\end{frame}
+\begin{frame}{Optimizer}
+  For all our tasks, we take Adam optimizer to optimize the parameters. We also perform
+  the local reparameterization trick as mentioned in the previous section and take the gradient
+  of the combined loss function with respect to the variational parameters $(\mu, \rho)$.
+\end{frame}
+\begin{frame}{Model Pruning}
+  \begin{itemize}
+    \item Apply an L1 norm over the network and for all the weights value as zero or below a defined threshold are removed and the model is pruned.
+    \item Reduce the size of the network to half (AlexNet and LeNet- 5) by reducing the number of filters to half.
+  \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\section{Classification}
+
+% -----------------------------------------------------------------------------
+\section{Experiments}
+
+% -----------------------------------------------------------------------------
+\end{document}
