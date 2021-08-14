@@ -6,5 +6,6 @@
 *~
 .*.swp
 *.out
+*.synctex.gz
 out
 build-daemon.pid
