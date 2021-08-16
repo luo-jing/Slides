@@ -55,15 +55,15 @@
     \item<1-> enhance recognition performance of the tail classes by transferring knowledge from the head classes
   \end{itemize}
   
-  \begin{block}{Title of}
-    hi
-  \end{block}
+  % \begin{block}{Title of}
+  %   hi
+  % \end{block}
 \end{frame}
 
 \begin{frame}{Our Contribution}
   \begin{itemize}
     \item <1-> Hybrid Continual Learning (HCL) - a normalizing flow-based approach.
-    \item Generative replay and a novel functional regularization are employed to alleviate forgetting. The functional regularization is shown to be better than generalize replay.
+    \item Generative replay and a novel functional regularization are employed to alleviate forgetting. The functional regularization is shown to be better than generative replay.
     \item <1-> HCL achieves strong performance on \emph{split MNIST}, \emph{split CIFAR}, \emph{SVHN-MNIST} and \emph{MNIST-SVHN} datasets.
     \item <1-> HCL can detect task boundaries and identify new as well as recurring tasks.
   \end{itemize}
@@ -116,12 +116,24 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Generative Replay}
-
+\begin{frame}{Generative Replay (HCL-GR)}
+  \begin{itemize}
+    \item <1-> Store a single snapshot of the HCL model $\hat{p}_X^{(k)}(x | y, t)$ with weights $\theta^{(k)}$.
+    \item <1-> Generate and replay data from old tasks using the snapshot: $x_{GR} \sim \hat{p}_X^{(k)}(x | y, t)$, where $y \sim U\{1, \dots, K\}$ and $t \sim U\{t_1, \dots, t_k\}$.
+    \item <1-> Maximize the likelihood $\mathcal{L}_{GR} = \log \hat{p}_X (x_{GR} | y, t)$ under the current model $\hat{p}_X(\cdot)$.
+    \item <1-> The resulting loss in generative replay training is $\mathcal{L}_{ll} + \mathcal{L}_{GR}$, where $\mathcal{L}_{ll}$ is the log-likelihood of the data on the current task.
+    \item <1-> Update the snapshot with new weights $\theta^{(k+1)}$ after detecting the task change $T_{t_{k+1}} \rightarrow T_{t_{k+2}}$. 
+  \end{itemize}
 \end{frame}
 
-\begin{frame}{Functional Regularization}
-  
+\begin{frame}{Functional Regularization (HCL-FR)}
+  Enforce the flow to map samples from previous tasks to the same latent representations as a snapshot model.
+
+  \begin{itemize}
+    \item <1-> Store a single snapshot of the model $\hat{p}_X^{(k)}(\cdot)$ and produce samples $x_{FR} \sim \hat{p}_X^{(k)}(x | y, t)$ for $y \sim U\{1, \dots, K\}$, $t \sim U\{t_1, \dots, t_k\}$.
+    \item <1-> $\mathcal{L}_{FR} = \left\| f_\theta(x_{FR}) - f_{\theta^{(k)}}(x_{FR}) \right\|^2$, where $f_\theta$ is the current flow mapping and $f_{\theta^{(k)}}$ is the snapshot model.
+    \item <1-> The resulting loss in functional regularization is $\mathcal{L}_{ll} + \alpha \mathcal{L}_{FR}$.
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Theoretical Analysis}
@@ -130,6 +142,30 @@
 
 % -----------------------------------------------------------------------------
 \section{Experiments}
+\begin{frame}{Compared Methods}
+  \begin{itemize}
+    \item <1-> Adam: Train the model with Adam optimizer without any extra steps for preventing forgetting.
+    \item <1-> Multi-Task Learning (MTL): When training on $T_{t_i}$, it has access to all previous tasks $T_{t_1}, \dots, T_{t_{i-1}}$.
+    \item <1-> Experience Replay (ER):
+    \item <1-> CURL:
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Datasets}
+  \begin{itemize}
+    \item <1-> Split MNIST: Split the dataset into 5 binary classification tasks. 
+    \item <1-> MNIST-SVHN and SVHN-MNIST:
+    \item <1-> Split CIFAR:
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Experiment Results}
+  
+\end{frame}
+
+\begin{frame}{Experiment Results on Split CIFAR}
+  
+\end{frame}
 
 % -----------------------------------------------------------------------------
 \section{Discussion}
