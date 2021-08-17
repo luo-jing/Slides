@@ -49,18 +49,55 @@
 % -----------------------------------------------------------------------------
 \section{Introduction}
 % \subsection{Smoot's Ear: The Measure of Humanity}
-\begin{frame}{Existing Approaches}
+\begin{frame}{Related Work}
+  \textbf{Continual Learning}:
   \begin{itemize}
-    \item<1-> re-sample the data or design specific loss functions that better facilitate learning with imbalanced data
-    \item<1-> enhance recognition performance of the tail classes by transferring knowledge from the head classes
+    \item <1-> Replay-based methods: Store a memory of the examples or knowledge learned so far.
+    \item <1-> Regularization-based methods: Constrain the parameter updates while learning new tasks to preserve previous knowledge.
+    \begin{itemize}
+      \item <1-> EWC, function-space regularization, feature regularization, OGD, AGEM, GPM, \dots
+    \end{itemize}
+    \item <1-> Modularity-based methods: Allocate different subsets of the parameters to each task.
   \end{itemize}
-  
   % \begin{block}{Title of}
   %   hi
   % \end{block}
 \end{frame}
 
-\begin{frame}{Our Contribution}
+\begin{frame}{Related Work}
+  \textbf{Task-Agnostic CL}: The task index is not provided during training and testing.
+  \begin{itemize}
+    \item <1-> Use the online variational Bayes framework to avoid the need or explicit task identities.
+    \item <1-> Detect task changes as peaks in the loss values following a plateau.
+    \item <1-> Infer the latent tasks within a Dirichlet process mixture model.
+    \item <1-> embed the information associated with different domains into several clusters.
+    \item <1-> CURL, CN-DPMM, \dots
+  \end{itemize}
+\end{frame}
+
+% \begin{frame}{Related Work}
+%   \textbf{OOD}:
+
+%   \textbf{Hybrid Models}:
+% \end{frame}
+
+\begin{frame}{Related Work}
+  \textbf{Normalizing Flows}: a flexible deep generative model with tractable likelihood 
+  based on invertible neural networks. Flows model the data distribution $p_X$ as
+  \[
+    \hat{p}_X = f_\theta^{-1}(\hat{p}_Z),
+  \]
+  where $\hat{p}_Z$ is a fixed density in the latent space and 
+  $f_\theta : \mathcal{X} \rightarrow \mathcal{Z}$ is an invertible neural network.
+  $\mathcal{X}$ and $\mathcal{Z}$ have the same dimension. Thus,
+  \[
+    \hat{p}_X(x) = \hat{p}_Z(f_\theta(x)) \cdot \left| \frac{\partial f_\theta}{\partial x} \right|.
+  \]
+  The architecture of the flow networks is designed to ensure cheap computation of $f^{-1}$ and $\left| \frac{\partial f_\theta}{\partial x} \right|$,
+  such as \emph{NICE}, \emph{RealNVP} and \emph{GLOW}.
+\end{frame}
+
+\begin{frame}{The Contributions}
   \begin{itemize}
     \item <1-> Hybrid Continual Learning (HCL) - a normalizing flow-based approach.
     \item Generative replay and a novel functional regularization are employed to alleviate forgetting. The functional regularization is shown to be better than generative replay.
@@ -82,8 +119,9 @@
   \end{itemize} 
 \end{frame}
 
-\begin{frame}{Task-agnostic CL}
+\begin{frame}{Task-Agnostic CL}
   In this work, the \emph{task-agnostic} setting is considered, where the task index is not provided and the model has to infer it from data.
+  Besides, some of the tasks can be recurring.
 \end{frame}
 
 % -----------------------------------------------------------------------------
